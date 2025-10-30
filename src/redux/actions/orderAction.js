@@ -28,7 +28,7 @@ export const createOrderAction = (payload) => async (dispatch) => {
   }
 };
 
-export const createOnlineOrder = async (payload) => {
+export const createOnlineOrder = (payload) => async () => {
   const res = await createOrderOnlineService(payload);
   return res;
 };
@@ -39,16 +39,16 @@ export const paymentVerificationAction = (payload) => async (dispatch) => {
   });
 
   const res = await paymentVerificationService(payload);
-  if (res.status === 200) {
+  if (res?.success) {
     dispatch({
       type: "paymentVerificationSuccess",
-      payload: res.message,
+      payload: res?.message,
     });
     return res;
   } else {
     dispatch({
       type: "paymentVerificationFail",
-      payload: res.response.data.message,
+      payload: "Something went wrong.",
     });
   }
 };
@@ -56,7 +56,7 @@ export const paymentVerificationAction = (payload) => async (dispatch) => {
 export const getMyOrdersAction = () => async (dispatch) => {
   dispatch({ type: "getMyOrdersRequest" });
   const res = await getMyOrdersService();
-  if (res?.success === true) {
+  if (res?.data?.success === true) {
     dispatch({ type: "getMyOrdersSuccess", payload: res?.data?.orders });
   } else {
     dispatch({ type: "getMyOrdersFail", payload: res.response.data.message });
