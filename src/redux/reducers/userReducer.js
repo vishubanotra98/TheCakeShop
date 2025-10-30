@@ -77,11 +77,11 @@ export const contactReducer = createReducer(
   {
     contactSuccess: (state, action) => {
       state.loading = false;
-      state.messages = action.payload;
+      state.message = action.payload;
     },
 
     contactFailed: (state, action) => {
-      state.message = action.payload;
+      state.error = action.payload;
     },
   }
 );

@@ -5,6 +5,10 @@ import {
   signupService,
 } from "../services/auth.service";
 import { swalErrorMessage } from "../../swalPopups/swalPopups";
+import {
+  fetchMessagesService,
+  userFeedBackService,
+} from "../services/common.service";
 
 export const isAuthenticatedAction = () => async (dispatch) => {
   try {
@@ -81,4 +85,14 @@ export const logout = () => async (dispatch) => {
       payload: "Logout Failed",
     });
   }
+};
+
+export const fetchMessagesAction = () => async () => {
+  const res = await fetchMessagesService();
+  return res?.data;
+};
+
+export const userFeedBackAction = (payload) => async (dispatch) => {
+  const res = await userFeedBackService(payload);
+  return res?.data;
 };

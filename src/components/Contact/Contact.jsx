@@ -1,37 +1,40 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import cake from "../../assets/cake.png";
-import axios from "axios";
+import { userFeedBackAction } from "../../redux/actions/userAction";
+import { useDispatch } from "react-redux";
+import toast from "react-hot-toast";
 
 const Contact = () => {
+  const dispatch = useDispatch();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const [load, setLoad] = useState(false);
 
   const formHandler = async (e) => {
     e.preventDefault();
-    try {
-      await axios.post(
-        "https://testingapp-mx0n.onrender.com/api/v1/contact",
-        {
-          name,
-          email,
-          message,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: localStorage.getItem("token"),
-          },
-        }
-      );
-      setName("");
-      setEmail("");
-      setMessage("");
-      alert("Message sent successfully");
-    } catch (error) {
-      alert(error.message);
+    setLoad(true);
+    if (!name || !email || !message) {
+      toast.error("Please fill all the fields to proceed.");
+      setLoad(false);
+      return;
     }
+    const payload = {
+      name,
+      email,
+      message,
+    };
+    const res = await dispatch(userFeedBackAction(payload));
+    if (res.success) {
+      toast.success(res.message);
+    } else {
+      toast.error("Error Sending Feedback.");
+    }
+    setName("");
+    setEmail("");
+    setMessage("");
+    setLoad(false);
   };
 
   return (
@@ -71,7 +74,9 @@ const Contact = () => {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
         ></textarea>
-        <button type="submit">Send</button>
+        <button type="submit" disabled={load}>
+          {load ? "Sending..." : "Send"}
+        </button>
       </motion.form>
 
       <motion.div

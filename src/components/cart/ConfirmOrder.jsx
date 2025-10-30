@@ -13,17 +13,25 @@ const ConfirmOrder = () => {
   const [disableBtn, setDisableBtn] = useState(false);
 
   const dispatch = useDispatch();
-  const {
-    shippingInfo,
-    cartItems,
-    paymentMethod,
-    subTotal,
-    tax,
-    shippingCharges,
-    total,
-  } = useSelector((state) => state.cart);
+  const { shippingInfo, cartItems, subTotal, tax, shippingCharges, total } =
+    useSelector((state) => state.cart);
 
   const { message, error } = useSelector((state) => state.order);
+
+  useEffect(() => {
+    if (message) {
+      toast.success(message);
+      dispatch({ type: "clearMessage" });
+      dispatch({ type: "emptyState" });
+      navigate("/paymentsuccess");
+    }
+
+    if (error) {
+      toast.error(error);
+      dispatch({ type: "clearError" });
+      setDisableBtn(false);
+    }
+  }, [dispatch, message, error, navigate]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -34,7 +42,7 @@ const ConfirmOrder = () => {
       const orderPayload = {
         shippingInfo,
         cartItems,
-        paymentMethod,
+        paymentMethod: payment,
         subTotal,
         tax,
         shippingCharges,
@@ -45,7 +53,7 @@ const ConfirmOrder = () => {
       const orderOnlinePayload = {
         shippingInfo,
         orderItems: cartItems,
-        paymentMethod,
+        paymentMethod: payment,
         itemPrice: subTotal,
         taxPrice: tax,
         shippingCharges,
@@ -53,10 +61,10 @@ const ConfirmOrder = () => {
       };
 
       const orderRes = await dispatch(createOnlineOrder(orderOnlinePayload));
-      const { order, orderOption } = orderRes;
+      const { order, orderOption } = orderRes?.data;
 
       const options = {
-        key: "rzp_test_tehPiPYj4wsRI4",
+        key: "rzp_test_RZdY56Izr367jk",
         amount: order.amount,
         currency: "INR",
         name: "THE CAKE SHOP",
@@ -83,21 +91,6 @@ const ConfirmOrder = () => {
     }
   };
 
-  useEffect(() => {
-    if (message) {
-      toast.success(message);
-      dispatch({ type: "clearMessage" });
-      dispatch({ type: "emptyState" });
-      navigate("/paymentsuccess");
-    }
-
-    if (error) {
-      toast.error(error);
-      dispatch({ type: "clearError" });
-      setDisableBtn(false);
-    }
-  }, [dispatch, message, error, navigate]);
-
   return (
     <section className="confirm-order">
       <main>
@@ -118,7 +111,7 @@ const ConfirmOrder = () => {
             <input
               type="radio"
               name="payment"
-              onChange={() => setPayment("online")}
+              onChange={() => setPayment("Online")}
             />
           </div>
 

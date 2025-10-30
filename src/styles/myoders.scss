@@ -1,6 +1,4 @@
-@import "./colors.scss";
-
-.usersClass {
+.myOrdersClass {
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   width: 100%;
   min-height: 100vh;
@@ -16,7 +14,7 @@
   }
 
   main {
-    max-width: 1040px;
+    max-width: 1100px;
     margin: 0 auto;
     background: #ffffff;
     border-radius: 16px;
@@ -29,7 +27,7 @@
     border: 1px solid rgba(0, 0, 0, 0.06);
   }
 
-  .users-header {
+  .myorders-header {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
@@ -92,6 +90,7 @@
       margin: 0;
       font-size: 0.95rem;
       color: #868e96;
+      max-width: 400px;
     }
   }
 
@@ -102,7 +101,7 @@
       width: 100%;
       border-collapse: separate;
       border-spacing: 0 12px;
-      table-layout: fixed;
+      table-layout: auto;
       overflow: visible;
 
       thead th {
@@ -149,71 +148,112 @@
             vertical-align: middle;
             color: #495057;
             font-size: 0.95rem;
-            word-break: break-word;
             background: transparent;
           }
 
-          .user-id-cell {
+          .order-id-cell {
             font-family: "Courier New", monospace;
             font-size: 0.85rem;
             color: #6c757d;
-            max-width: 200px;
+            max-width: 180px;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
           }
 
-          .name-cell {
-            font-weight: 600;
-            color: #212529;
-          }
-
-          .photo-cell {
-            text-align: center;
-
-            img {
-              height: 40px;
-              width: 40px;
-              border-radius: 50%;
-              object-fit: cover;
-              border: 2px solid #e9ecef;
-              box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            }
-          }
-
-          .role-cell {
-            .role-badge {
+          .status-cell {
+            .status-badge {
               display: inline-block;
               padding: 6px 14px;
               border-radius: 999px;
               font-size: 0.8rem;
               font-weight: 600;
-              text-transform: uppercase;
+              text-transform: capitalize;
               letter-spacing: 0.3px;
 
-              &.admin {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-                box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+              &.preparing {
+                background: linear-gradient(135deg, #ffd93d 0%, #ffaa00 100%);
+                color: #5a3e00;
+                box-shadow: 0 2px 8px rgba(255, 217, 61, 0.4);
               }
 
-              &.user {
+              &.shipped {
                 background: linear-gradient(135deg, #48c6ef 0%, #6f86d6 100%);
                 color: white;
                 box-shadow: 0 2px 8px rgba(72, 198, 239, 0.3);
               }
 
-              &.moderator {
+              &.delivered {
+                background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+                color: white;
+                box-shadow: 0 2px 8px rgba(56, 239, 125, 0.3);
+              }
+
+              &.pending {
                 background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
                 color: white;
                 box-shadow: 0 2px 8px rgba(240, 147, 251, 0.3);
               }
+
+              &.cancelled {
+                background: linear-gradient(135deg, #757f9a 0%, #d7dde8 100%);
+                color: #2d3748;
+                box-shadow: 0 2px 8px rgba(117, 127, 154, 0.3);
+              }
             }
           }
 
-          .date-cell {
+          .quantity-cell {
+            font-weight: 600;
+            color: #495057;
+          }
+
+          .amount-cell {
+            font-weight: 700;
+            color: #212529;
+            font-size: 1rem;
+          }
+
+          .payment-cell {
+            text-transform: capitalize;
             color: #6c757d;
-            font-size: 0.9rem;
+          }
+
+          .action-cell {
+            .action-btn {
+              display: inline-flex;
+              align-items: center;
+              justify-content: center;
+              gap: 6px;
+              padding: 8px 16px;
+              border-radius: 8px;
+              border: none;
+              cursor: pointer;
+              transition: all 0.2s ease;
+              font-size: 0.9rem;
+              font-weight: 600;
+              text-decoration: none;
+              background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+              color: white;
+              box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+
+              svg {
+                font-size: 1.1rem;
+              }
+
+              .btn-text {
+                display: inline;
+              }
+
+              &:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+              }
+
+              &:active {
+                transform: scale(0.95);
+              }
+            }
           }
         }
       }
@@ -221,7 +261,7 @@
   }
 
   /* Responsive: switch to stacked cards on small screens */
-  @media (max-width: 720px) {
+  @media (max-width: 900px) {
     padding: 1.5rem 0.75rem;
 
     main {
@@ -229,7 +269,7 @@
       border-radius: 12px;
     }
 
-    .users-header {
+    .myorders-header {
       h1 {
         font-size: 1.5rem;
       }
@@ -271,23 +311,40 @@
       font-size: 0.875rem;
     }
 
-    .user-id-cell {
+    .order-id-cell {
       max-width: none;
       white-space: normal;
       word-break: break-all;
     }
 
-    .photo-cell {
-      text-align: right;
-
-      img {
-        height: 50px;
-        width: 50px;
-      }
+    .status-cell,
+    .action-cell {
+      justify-content: flex-end;
     }
 
-    .role-cell {
-      justify-content: flex-end;
+    .action-cell .action-btn {
+      padding: 8px 12px;
+      font-size: 0.85rem;
+
+      .btn-text {
+        display: none;
+      }
+
+      svg {
+        margin: 0;
+      }
+    }
+  }
+
+  @media (max-width: 480px) {
+    .action-cell .action-btn {
+      width: 36px;
+      height: 36px;
+      padding: 0;
+
+      .btn-text {
+        display: none;
+      }
     }
   }
 }
