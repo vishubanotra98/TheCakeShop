@@ -13,6 +13,10 @@ export const API = {
     PAYMENT_VERIFICATION: "/paymentverification",
     ORDER_DETAILS: "/order",
   },
+  ADMIN: {
+    FEEDBACK: "/admin/contact",
+    USER_FEEDBACK: "/contact",
+  },
 };
 
 const token = localStorage.getItem("token");
