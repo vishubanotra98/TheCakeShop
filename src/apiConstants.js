@@ -19,20 +19,34 @@ export const API = {
   },
 };
 
-const token = localStorage.getItem("token");
-export const BASE_URL = process.env.REACT_APP_BASE_URL;
-export const axiosClient = axios.create();
+export const BASE_URL = process.env.REACT_APP_BASE_URL || "";
+export const axiosClient = axios.create({
+  baseURL: BASE_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 
-axiosClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-axiosClient.defaults.headers.common["Content-type"] = "application/json";
+export const setAuthToken = (token) => {
+  if (token) {
+    axiosClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    localStorage.setItem("token", token);
+  } else {
+    delete axiosClient.defaults.headers.common["Authorization"];
+    localStorage.removeItem("token");
+  }
+};
+
+const tokenOnLoad = localStorage.getItem("token");
+if (tokenOnLoad) setAuthToken(tokenOnLoad);
 
 axiosClient.interceptors.response.use(
-  async (response) => {
-    if (response.data) {
-      return response;
-    }
+  (response) => {
+    return response;
   },
-  async (error) => {
-    return error;
+  (error) => {
+    if (error.response) {
+      return Promise.reject(error.response);
+    }
   }
 );

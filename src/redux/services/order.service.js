@@ -8,7 +8,7 @@ export const createOrderService = async (payload) => {
     );
     return res?.data;
   } catch (error) {
-    return error;
+    throw error;
   }
 };
 
@@ -32,13 +32,17 @@ export const paymentVerificationService = async (payload) => {
     );
     return res?.data;
   } catch (error) {
-    return error;
+    throw error;
   }
 };
 
 export const getMyOrdersService = async () => {
-  const res = await axiosClient.get(`${BASE_URL}${API.ORDERS.GET_ORDERS}`);
-  return res;
+  try {
+    const res = await axiosClient.get(`${BASE_URL}${API.ORDERS.GET_ORDERS}`);
+    return res?.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const getOrderDetailsService = async (id) => {
@@ -48,6 +52,6 @@ export const getOrderDetailsService = async (id) => {
     );
     return res?.data;
   } catch (error) {
-    return error;
+    throw error;
   }
 };
