@@ -8,19 +8,20 @@ import {
 } from "../services/order.service";
 
 export const createOrderAction = (payload) => async (dispatch) => {
-  dispatch({
-    type: "createOrderRequest",
-  });
-
-  const res = await createOrderService(payload);
-  if (res.status === 200) {
+  try {
     dispatch({
-      type: "createOrderSuccess",
-      payload: res.message,
+      type: "createOrderRequest",
     });
-    return res;
-  } else {
-    const errorResponse = res?.response.data;
+    const res = await createOrderService(payload);
+    if (res.status === 200) {
+      dispatch({
+        type: "createOrderSuccess",
+        payload: res.message,
+      });
+      return res;
+    }
+  } catch (error) {
+    const errorResponse = error?.data;
     dispatch({
       type: "createOrderFail",
       payload: errorResponse.errMsg,
@@ -29,8 +30,12 @@ export const createOrderAction = (payload) => async (dispatch) => {
 };
 
 export const createOnlineOrder = (payload) => async () => {
-  const res = await createOrderOnlineService(payload);
-  return res;
+  try {
+    const res = await createOrderOnlineService(payload);
+    return res;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const paymentVerificationAction = (payload) => async (dispatch) => {
@@ -54,24 +59,28 @@ export const paymentVerificationAction = (payload) => async (dispatch) => {
 };
 
 export const getMyOrdersAction = () => async (dispatch) => {
-  dispatch({ type: "getMyOrdersRequest" });
-  const res = await getMyOrdersService();
-  if (res?.data?.success === true) {
-    dispatch({ type: "getMyOrdersSuccess", payload: res?.data?.orders });
-  } else {
-    dispatch({ type: "getMyOrdersFail", payload: res.response.data.message });
+  try {
+    dispatch({ type: "getMyOrdersRequest" });
+    const res = await getMyOrdersService();
+    if (res?.success) {
+      dispatch({ type: "getMyOrdersSuccess", payload: res?.orders });
+    }
+  } catch (error) {
+    dispatch({ type: "getMyOrdersFail", payload: error.data.message });
   }
 };
 
 export const getOrderDetails = (id) => async (dispatch) => {
-  dispatch({ type: "getOrderDetailsRequest" });
-  const res = await getOrderDetailsService(id);
-  if (res?.success === true) {
-    dispatch({ type: "getOrderDetailsSuccess", payload: res.order });
-  } else {
+  try {
+    dispatch({ type: "getOrderDetailsRequest" });
+    const res = await getOrderDetailsService(id);
+    if (res?.success === true) {
+      dispatch({ type: "getOrderDetailsSuccess", payload: res.order });
+    }
+  } catch (error) {
     dispatch({
       type: "getOrDetailsFail",
-      payload: res.response.data.message,
+      payload: error.data.message,
     });
   }
 };

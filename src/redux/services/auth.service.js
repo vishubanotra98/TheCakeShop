@@ -5,9 +5,9 @@ export const isAuthenticatedService = async () => {
     const res = await axiosClient.get(
       `${BASE_URL}${API.AUTH.IS_AUTHENTICATED}`
     );
-    return res.data;
-  } catch (error) {
-    return error;
+    return res?.data;
+  } catch (err) {
+    throw err;
   }
 };
 
@@ -19,18 +19,19 @@ export const signupService = async (payload) => {
     );
     return res?.data;
   } catch (error) {
-    return error;
+    throw error;
   }
 };
 
 export const loginService = async (payload) => {
   try {
-    const res = await axiosClient.post(
-      `${BASE_URL}${API.AUTH.LOG_IN}`,
-      payload
-    );
-    return res.data;
-  } catch (error) {
-    return error;
+    const res = await axiosClient.post(`${API.AUTH.LOG_IN}`, payload);
+    const token = res?.token;
+    if (res?.status === 200) {
+      localStorage.setItem("token", token);
+      return res.data;
+    }
+  } catch (err) {
+    throw err;
   }
 };

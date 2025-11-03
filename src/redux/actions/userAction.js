@@ -1,10 +1,8 @@
-import axios from "axios";
 import {
   isAuthenticatedService,
   loginService,
   signupService,
 } from "../services/auth.service";
-import { swalErrorMessage } from "../../swalPopups/swalPopups";
 import {
   fetchMessagesService,
   userFeedBackService,
@@ -17,53 +15,61 @@ export const isAuthenticatedAction = () => async (dispatch) => {
     });
 
     const res = await isAuthenticatedService();
-
-    dispatch({
-      type: "loadUserSucess",
-      payload: res.user,
-    });
+    if (res?.status === 200) {
+      dispatch({
+        type: "loadUserSucess",
+        payload: res?.user,
+      });
+    }
   } catch (error) {
-    swalErrorMessage(error.response.data.message);
+    console.log(error);
+    dispatch({
+      type: "loadUserFail",
+      payload: error?.data?.message || "User Not Found.",
+    });
   }
 };
 
 export const loginAction = (payload) => async (dispatch) => {
-  dispatch({
-    type: "loginRequest",
-  });
-
-  const res = await loginService(payload);
-  if (res?.status === 200) {
-    const token = res?.token;
-    localStorage.setItem("token", token);
+  try {
     dispatch({
-      type: "loginRequestSucess",
-      payload: res.message,
+      type: "loginRequest",
     });
-    return res;
-  } else {
+
+    const res = await loginService(payload);
+    if (res?.status === 200) {
+      const token = res?.token;
+      localStorage.setItem("token", token);
+      dispatch({
+        type: "loginRequestSucess",
+        payload: res.message,
+      });
+      return res;
+    }
+  } catch (error) {
     dispatch({
       type: "loginRequestFail",
-      payload: res.response.errMsg,
+      payload: error.data.errMsg,
     });
   }
 };
 
 export const signupAction = (payload) => async (dispatch) => {
-  dispatch({
-    type: "signupRequest",
-  });
-  const res = await signupService(payload);
-  if (res?.status === 200) {
+  try {
     dispatch({
-      type: "signupRequestSuccess",
-      payload: res.message,
+      type: "signupRequest",
     });
-    return res;
-  } else {
-    console.log("Running");
-    const errResponse = res.response.data;
-    dispatch({ type: "signupRequestFail", payload: errResponse?.errMsg });
+    const res = await signupService(payload);
+    if (res?.status === 200) {
+      dispatch({
+        type: "signupRequestSuccess",
+        payload: res.message,
+      });
+      return res;
+    }
+  } catch (error) {
+    const errResponse = error.data.errMsg;
+    dispatch({ type: "signupRequestFail", payload: errResponse });
   }
 };
 
@@ -72,9 +78,10 @@ export const logout = () => async (dispatch) => {
     dispatch({
       type: "logoutRequest",
     });
-
     localStorage.removeItem("token");
-
+    localStorage.removeItem("cartItem");
+    localStorage.removeItem("cartPrices");
+    localStorage.removeItem("shippingInfo");
     dispatch({
       type: "logoutSucess",
       payload: "Logged out Successfully",
